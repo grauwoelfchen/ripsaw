@@ -25,16 +25,12 @@ const OAUTH_SCOPE: &str = "https://www.googleapis.com/auth/devstorage.read_write
 const BUCKET_NAME: &str = "ripsaw";
 
 #[derive(Deserialize)]
-struct Message<'a> {
-    data: &'a [u8],
-    message_id: &'a str,
-    _publish_time: &'a str,
-}
-
-#[derive(Deserialize)]
-struct PubSubMessage<'a> {
-    message: Message<'a>,
-    _subscription: &'a str,
+#[serde(rename_all = "camelCase")]
+struct Attributes<'a> {
+    _bucket_id: &'a str,
+    _event_time: &'a str,
+    event_type: &'a str,
+    object_id: &'a str,
 }
 
 #[derive(Deserialize)]
@@ -49,6 +45,20 @@ struct Data<'a> {
     time_created: &'a str,
 }
 
+#[derive(Deserialize)]
+struct Message<'a> {
+    data: &'a [u8],
+    attributes: Attributes<'a>,
+    message_id: &'a str,
+    _publish_time: &'a str,
+}
+
+#[derive(Deserialize)]
+struct PubSubMessage<'a> {
+    message: Message<'a>,
+    _subscription: &'a str,
+}
+
 type Methods<'a> = ObjectMethods<'a, HttpClient, ServiceAccountAccess<HttpClient>>;
 
 fn handle<'a>(input: &'a str, methods: &Methods) -> JsonResult<()> {
@@ -61,7 +71,15 @@ fn handle<'a>(input: &'a str, methods: &Methods) -> JsonResult<()> {
 
     println!("message_id: {}", m.message.message_id);
 
+    println!("event_type: {}", m.message.attributes.event_type);
+    println!("object_id: {}", m.message.attributes.object_id);
+
     let d: Data = serde_json::from_str(&data)?;
+
+    println!("kind: {}", d.kind);
+    println!("content_type: {}", d.content_type);
+    println!("bucket: {}", d.bucket);
+
     if d.kind == "storage#object" && d.content_type == "text/csv" &&
         d.bucket == BUCKET_NAME {
         println!("time created: {}", d.time_created);
