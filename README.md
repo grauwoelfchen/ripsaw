@@ -22,10 +22,23 @@ NR % l == 2 { close(x); N++; x = p N s; print header > x }
 % ripsaw input.csv result 10000
 ```
 
-## Usage
+## Setup
+
+### Standalone CLI
 
 TODO
 
+### Server
+
+```zsh
+% python2.7 -m virtualenv venv
+% source venv/bin/activate
+(venv) % ./tool/setup-cloud-sdk
+(venv) % source ./tool/load-gcloud
+(venv) % gcloud init
+```
+
+TODO
 
 ## License
 

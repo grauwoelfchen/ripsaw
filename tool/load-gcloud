@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+root_path=$(dirname $(dirname $(readlink -f $0)))
+tool_dir=$root_path/tool
+
+gcloud_sdk=$tool_dir/google-cloud-sdk
+
+if [ -f "${gcloud_sdk}/path.zsh.inc" ]; then
+  source "${gcloud_sdk}/path.zsh.inc";
+fi
+
+if [ -f "${gcloud_sdk}/completion.zsh.inc" ]; then
+  source "${gcloud_sdk}/completion.zsh.inc";
+fi
