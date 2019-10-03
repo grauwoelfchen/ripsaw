@@ -66,7 +66,7 @@ fn handle<'a>(input: &'a str, methods: &Methods) -> JsonResult<()> {
     println!("publish_time: {}", m.message.publish_time);
 
     let d: Data = serde_json::from_str(&data)?;
-    if d.kind == "storage#object" && d.content_type == "textv/csv" &&
+    if d.kind == "storage#object" && d.content_type == "text/csv" &&
         d.bucket == BUCKET_NAME {
         let result = methods.get(&BUCKET_NAME, d.name).doit();
         match result {
