@@ -1,9 +1,41 @@
+extern crate serde;
+extern crate serde_json;
+
 use std::env;
 use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 
-fn handle(mut stream: TcpStream) {
+use serde::Deserialize;
+use serde_json::Result;
+
+#[derive(Deserialize)]
+struct Message<'a> {
+    data: &'a [u8],
+    message_id: &'a str,
+    publish_time: &'a str,
+}
+
+#[derive(Deserialize)]
+struct PubSubMessage<'a> {
+    message: Message<'a>,
+    subscription: &'a str,
+}
+
+fn handle<'a>(input: &'a str) -> Result<()> {
+    println!("input: {}", input);
+
+    let m: PubSubMessage<'a> = serde_json::from_str(input)?;
+
+    println!("subscription: {}", m.subscription);
+    println!("data: {}", String::from_utf8_lossy(m.message.data));
+    println!("message_id: {}", m.message.message_id);
+    println!("publish_time: {}", m.message.publish_time);
+
+    Ok(())
+}
+
+fn handle_request(mut stream: TcpStream) {
     stream
         .set_nonblocking(true)
         .expect("cannot set non-blocking mode");
@@ -23,7 +55,10 @@ fn handle(mut stream: TcpStream) {
         if line == "" {
             has_body = true;
         } else if has_body {
-            println!("{}", line);
+            // TODO
+            let _ = handle(line);
+
+            // echo
             let response = format!("HTTP/1.1 200 OK\r\n\r\n{}\r\n", line);
             stream
                 .write_all(response.as_bytes())
@@ -51,7 +86,7 @@ fn main() -> io::Result<()> {
     for stream in listener.incoming() {
         match stream {
             Ok(s) => {
-                thread::spawn(move || handle(s));
+                thread::spawn(move || handle_request(s));
             },
             Err(e) => panic!("err: {}", e),
         }

@@ -1,0 +1,19 @@
+[package]
+name = "Ripsaw"
+version = "0.0.1"
+authors = ["Yasuhiro Яша Asaka <yasuhiro.asaka@grauwoelfchen.net>"]
+description = "A server/cli CSV splitter"
+repository = "https://gitlab.com/grauwoelfchen/ripsaw"
+keywords = []
+license = "Apache-2.0"
+
+[[bin]]
+name = "ripsaw"
+path = "src/main.rs"
+
+[profile.release]
+panic = "abort"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
