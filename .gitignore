@@ -1,1 +1,4 @@
 *.csv
+
+/venv*
+/tool/google-cloud-sdk*
