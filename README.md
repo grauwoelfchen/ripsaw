@@ -28,6 +28,11 @@ NR % l == 2 { close(x); N++; x = p N s; print header > x }
 % ripsaw.sh input.csv result 10000
 ```
 
+##### Requirements
+
+* Rust
+* MUSL libc (only for server)
+
 
 ## Setup
 
@@ -45,6 +50,12 @@ e.g. Cloud Pub/Sub + Cloud Run + Cloud Storage
 (venv) % ./tool/setup-cloud-sdk
 (venv) % source ./tool/load-gcloud
 (venv) % gcloud init
+```
+
+```zsh
+(venv) % gcloud builds submit --tag gcr.io/<PROJECT-ID>/ripsaw
+(venv) % gcloud beta run deploy ripsaw \
+  --image gcr.io/<PROJECT-ID>/ripsaw --platform managed
 ```
 
 TODO
