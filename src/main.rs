@@ -1,6 +1,6 @@
 use std::env;
 use std::io::{self, Read, Write};
-use std::net::{Shutdown, TcpListener, TcpStream};
+use std::net::{TcpListener, TcpStream};
 use std::thread;
 
 fn handle(mut stream: TcpStream) {
@@ -31,7 +31,6 @@ fn handle(mut stream: TcpStream) {
             stream.flush().unwrap();
         }
     }
-    stream.shutdown(Shutdown::Both).expect("shutdown call failed");
 }
 
 fn get_addr() -> String {
