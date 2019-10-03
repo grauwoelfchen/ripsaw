@@ -1,6 +1,6 @@
 use std::env;
 use std::io::{self, Read, Write};
-use std::net::{TcpListener, TcpStream};
+use std::net::{Shutdown, TcpListener, TcpStream};
 use std::thread;
 
 fn handle(mut stream: TcpStream) {
@@ -18,18 +18,20 @@ fn handle(mut stream: TcpStream) {
         },
     };
 
-	println!("{}", buf);
-
-    let mut body = false;
+    let mut has_body = false;
     for line in buf.lines() {
         if line == "" {
-            body = true;
-        } else if body {
+            has_body = true;
+        } else if has_body {
+            println!("{}", line);
+            let response = format!("HTTP/1.1 200 OK\r\n\r\n{}\r\n", line);
             stream
-                .write_all(format!("{}\r\n", line).as_bytes())
+                .write_all(response.as_bytes())
                 .unwrap();
+            stream.flush().unwrap();
         }
     }
+    stream.shutdown(Shutdown::Both).expect("shutdown call failed");
 }
 
 fn get_addr() -> String {
