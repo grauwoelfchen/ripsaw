@@ -93,7 +93,7 @@ Just create a service account and a pub/sub topic we want to subscribe.
 Let's create a bucket and configure notification to topic we've just created.
 
 ```zsh
-(venv) % gsutil mb --retention 1m gs://<BUCKET-NAME>
+(venv) % gsutil mb --retention 1d gs://<BUCKET-NAME>
 (venv) % gsutil notification create -f json \
   -t projects/<PROJECT-ID>/topics/ripsaw gs://<BUCKET-NAME>
 ```
@@ -114,6 +114,7 @@ Finally, build an image using Dockerfile and then deploy it on the cluster.
 ## Todos
 
 * [ ] Support compressed files (by zip or gz etc. for input/output)
+* [ ] Set lifecycle rule
 * [ ] Enable splitting by data size (not rows count)
 * [ ] Consider error report
 * [ ] Think something about limitation (data size?)
@@ -122,7 +123,7 @@ Finally, build an image using Dockerfile and then deploy it on the cluster.
 
 And... only for server:
 
-* [ ] Support short-term file retention (currently 1 month by the bucket)
+* [ ] Support short-term file retention (currently 1 day by the bucket)
 * [ ] Create Web UI (upload/download)?
 
 
