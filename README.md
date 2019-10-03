@@ -66,13 +66,49 @@ TODO
 (venv) % gcloud init
 ```
 
+##### Cloud Pub/Sub
+
+Just create a service account and a pub/sub topic we want to subscribe.
+
 ```zsh
+(venv) % gcloud projects add-iam-policy-binding <PROJECT-ID> \
+  --member=serviceAccount:service-<PROJECT-NUMBER>@gcp-sa-pubsub.iam.gserviceaccount.com \
+  --role=roles/iam.serviceAccountTokenCreator
+(venv) % gcloud iam service-accounts create cloud-run-ripsaw-invoker \
+  --display-name "Cloud Run Ripsaw Invoker"
+
+(venv) % gcloud beta run services add-iam-policy-binding ripsaw \
+ --member=serviceAccount:cloud-run-ripsaw-invoker@<PROJECT-ID>.iam.gserviceaccount.com \
+ --role=roles/run.invoker
+
+(venv) % gcloud beta pubsub topics create ripsaw
+(venv) % gcloud beta pubsub subscriptions create ripsaw-subscriptions \
+  --topic ripsaw \
+  --push-endpoint=https://<DOMAIN>/ \
+  --push-auth-service-account=cloud-run-ripsaw-invoker@<PROJECT-ID>.iam.gserviceaccount.com
+```
+
+##### Cloud Storage
+
+Let's create a bucket and configure notification to topic we've just created.
+
+```zsh
+(venv) % gsutil mb --retention 1m gs://<BUCKET-NAME>
+(venv) % gsutil notification create -f json \
+  -t projects/<PROJECT-ID>/topics/ripsaw gs://<BUCKET-NAME>
+```
+
+###### Cloud Run
+
+Finally, build an image using Dockerfile and then deploy it on the cluster.
+
+```zsh
+(venv) % gcloud config set run/region <REGION>
+
 (venv) % gcloud builds submit --tag gcr.io/<PROJECT-ID>/ripsaw
 (venv) % gcloud beta run deploy ripsaw \
   --image gcr.io/<PROJECT-ID>/ripsaw --platform managed
 ```
-
-TODO
 
 
 ## WIP
