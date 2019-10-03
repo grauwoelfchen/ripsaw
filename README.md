@@ -42,7 +42,21 @@ TODO
 
 ### Server
 
-e.g. Cloud Pub/Sub + Cloud Run + Cloud Storage
+##### Local
+
+```zsh
+% make
+% HOST=127.0.0.1 PORT=8000 ./ripsaw
+```
+
+##### Docker
+
+```zsh
+% docker build . -t ripsaw:latest
+% docker run --env PORT=8000 -p 127.0.0.1:8000:8000/tcp ripsaw
+```
+
+##### e.g. Cloud Pub/Sub + Cloud Run + Cloud Storage
 
 ```zsh
 % python2.7 -m virtualenv venv
