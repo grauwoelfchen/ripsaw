@@ -1,5 +1,5 @@
 NAME ?= ripsaw
-IMAGE ?= gcr.io/$(PROJECT_ID)/$(NAME)
+IMAGE ?= gcr.io/$(PROJECT_ID)/$(NAME):latest
 
 build:
 	cargo build
@@ -11,7 +11,8 @@ build\:release:
 .PHONY: build\:release
 
 deploy:
-	gcloud builds submit --tag $(IMAGE) --timeout 1h
+	gcloud builds submit --tag $(IMAGE) --timeout 1h \
+		--cache-from $(IMAGE)
 	gcloud beta run deploy $(NAME) \
 		--image $(IMAGE) \
 		--platform managed
