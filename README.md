@@ -113,6 +113,7 @@ Finally, build an image using Dockerfile and then deploy it on the cluster.
 
 ## Todos
 
+* [ ] Use cache at building
 * [ ] Support compressed files (by zip or gz etc. for input/output)
 * [ ] Set lifecycle rule
 * [ ] Enable splitting by data size (not rows count)
