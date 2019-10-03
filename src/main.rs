@@ -12,8 +12,7 @@ use std::net::{TcpListener, TcpStream};
 use std::thread;
 
 use base64::decode;
-use oauth::{ApplicationSecret, Authenticator, DefaultAuthenticatorDelegate,
-    MemoryStorage};
+use oauth::{GetToken, ServiceAccountAccess};
 use hyper::Client as HttpClient;
 use hyper_rustls::TlsClient;
 use hyper::net::HttpsConnector;
@@ -21,53 +20,52 @@ use serde::Deserialize;
 use serde_json::Result as JsonResult;
 use storage::{ObjectMethods, Storage};
 
+const SA_KEY_FILE: &str = "key.json";
+const OAUTH_SCOPE: &str = "https://www.googleapis.com/auth/devstorage.read_write";
 const BUCKET_NAME: &str = "ripsaw";
 
 #[derive(Deserialize)]
 struct Message<'a> {
     data: &'a [u8],
     message_id: &'a str,
-    publish_time: &'a str,
+    _publish_time: &'a str,
 }
 
 #[derive(Deserialize)]
 struct PubSubMessage<'a> {
     message: Message<'a>,
-    subscription: &'a str,
+    _subscription: &'a str,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct Data<'a> {
-    id: &'a str,
+    _id: &'a str,
     kind: &'a str,
     name: &'a str,
-    size: &'a str,
+    _size: &'a str,
     bucket: &'a str,
     content_type: &'a str,
     time_created: &'a str,
 }
 
-type Methods<'a> = ObjectMethods<'a, HttpClient, Authenticator<
-  DefaultAuthenticatorDelegate, MemoryStorage, HttpClient>>;
+type Methods<'a> = ObjectMethods<'a, HttpClient, ServiceAccountAccess<HttpClient>>;
 
 fn handle<'a>(input: &'a str, methods: &Methods) -> JsonResult<()> {
     println!("input: {}", input);
 
     let m: PubSubMessage<'a> = serde_json::from_str(input)?;
 
-    println!("subscription: {}", m.subscription);
-
     let content = &decode(m.message.data).unwrap()[..];
     let data = String::from_utf8_lossy(content);
 
-    println!("data: {}", data);
     println!("message_id: {}", m.message.message_id);
-    println!("publish_time: {}", m.message.publish_time);
 
     let d: Data = serde_json::from_str(&data)?;
     if d.kind == "storage#object" && d.content_type == "text/csv" &&
         d.bucket == BUCKET_NAME {
+        println!("time created: {}", d.time_created);
+
         let result = methods.get(&BUCKET_NAME, d.name).doit();
         match result {
             Err(e) => {
@@ -79,10 +77,6 @@ fn handle<'a>(input: &'a str, methods: &Methods) -> JsonResult<()> {
                 println!("response: {}", buffer);
             },
         }
-
-        println!("id: {}", d.id);
-        println!("size: {}", d.size);
-        println!("time created: {}", d.time_created);
     }
 
     Ok(())
@@ -136,22 +130,18 @@ fn main() -> io::Result<()> {
                 thread::spawn(move || {
                     // FIXME
                     // I'd like to authenticate once before spawn :'(
-                    let secret: ApplicationSecret = Default::default();
-                    let auth = Authenticator::new(
-                        &secret,
-                        DefaultAuthenticatorDelegate,
-                        HttpClient::with_connector(
-                            HttpsConnector::new(TlsClient::new())),
-                        <MemoryStorage as Default>::default(),
-                        None,
-                    );
-                    let storage = Storage::new(
-                        HttpClient::with_connector(
-                            HttpsConnector::new(TlsClient::new())),
-                        auth,
-                    );
-                    let o = storage.objects();
+                    let secret = oauth::service_account_key_from_file(
+                        &SA_KEY_FILE.to_string()).unwrap();
+                    let client = HttpClient::with_connector(
+                        HttpsConnector::new(TlsClient::new()));
 
+                    let mut access = ServiceAccountAccess::new(secret, client);
+                    access.token(&vec![OAUTH_SCOPE]).unwrap();
+
+                    let client = HttpClient::with_connector(
+                        HttpsConnector::new(TlsClient::new()));
+                    let storage = Storage::new(client, access);
+                    let o = storage.objects();
                     handle_request(s, &o);
                 });
             },
