@@ -6,20 +6,14 @@
 A tool split CSV file by rows count with its header.
 
 This works almost same as a following AWK script.
+\# `l` (line numbers count) must be more than 2
 
-```
-#!/bin/sh
-
-# l (line numbers count) must be more than 2
-awk -v p="${2}-" -v s=".csv" -v l="${3}" '
-NR == 1 { header = $0; next }
-NR % l == 2 { close(x); N++; x = p N s; print header > x }
-{ print > x }
-' $1
+```zsh
+% awk -v p="result-" -v s=".csv" -v l="10000" -f ripsaw.awk input.csv
 ```
 
 ```zsh
-% ripsaw input.csv result 10000
+% ripsaw.sh input.csv result 10000
 ```
 
 ## Setup
