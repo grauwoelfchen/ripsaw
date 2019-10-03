@@ -35,7 +35,7 @@ fn handle(mut stream: TcpStream) {
 fn get_addr() -> String {
     let host = match env::var("HOST") {
         Ok(value) => value,
-        Err(_) => "127.0.0.1".to_string(),
+        Err(_) => "0.0.0.0".to_string(),
     };
     let port = match env::var("PORT") {
         Ok(value) => value,
