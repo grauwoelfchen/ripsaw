@@ -1,3 +1,4 @@
+extern crate base64;
 extern crate serde;
 extern crate serde_json;
 
@@ -6,6 +7,7 @@ use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 
+use base64::decode;
 use serde::Deserialize;
 use serde_json::Result;
 
@@ -28,7 +30,9 @@ fn handle<'a>(input: &'a str) -> Result<()> {
     let m: PubSubMessage<'a> = serde_json::from_str(input)?;
 
     println!("subscription: {}", m.subscription);
-    println!("data: {}", String::from_utf8_lossy(m.message.data));
+
+    let data = &decode(m.message.data).unwrap()[..];
+    println!("data: {}", String::from_utf8_lossy(data));
     println!("message_id: {}", m.message.message_id);
     println!("publish_time: {}", m.message.publish_time);
 
