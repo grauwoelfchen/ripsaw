@@ -8,8 +8,7 @@ RUN rustup target add x86_64-unknown-linux-musl
 WORKDIR /app
 COPY . .
 
-RUN RUSTFLAGS=-Clinker=musl-gcc \
-  rustc src/main.rs --target x86_64-unknown-linux-musl -o ripsaw
+RUN make
 
 FROM alpine:3.10
 
