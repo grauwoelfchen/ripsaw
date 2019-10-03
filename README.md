@@ -37,6 +37,8 @@ TODO
 
 ### Server
 
+e.g. Cloud Pub/Sub + Cloud Run + Cloud Storage
+
 ```zsh
 % python2.7 -m virtualenv venv
 % source venv/bin/activate
