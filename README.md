@@ -3,9 +3,21 @@
 ![logo](img/logo.jpg?raw=true "Ripsaw")
 
 
-A tool split CSV file by rows count with its header.
+A tool/server splitting CSV file by rows count with its header.
+You would not need sharp saw any more!
 
-This works almost same as a following AWK script.
+
+## Idea
+
+This works almost just same as a following AWK script.
+
+```zsh
+% cat ./ripsaw.awk
+NR == 1 { header = $0; next }
+NR % l == 2 { close(x); N++; x = p N s; print header > x }
+{ print > x }
+```
+
 \# `l` (line numbers count) must be more than 2
 
 ```zsh
@@ -15,6 +27,7 @@ This works almost same as a following AWK script.
 ```zsh
 % ripsaw.sh input.csv result 10000
 ```
+
 
 ## Setup
 
@@ -33,6 +46,14 @@ TODO
 ```
 
 TODO
+
+
+## WIP
+
+* [ ] Support compressed file (by zip or gz etc. for input/output)
+* [ ] Monitoring splitting progress
+* [ ] Web UI?
+
 
 ## License
 
