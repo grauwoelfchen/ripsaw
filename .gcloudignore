@@ -1,0 +1,10 @@
+.git
+
+/img
+
+/venv
+/tool
+
+/target
+
+*.csv

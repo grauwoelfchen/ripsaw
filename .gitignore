@@ -1,6 +1,7 @@
 /target
 
 *.csv
+*.json
 
 /venv*
 /tool/google-cloud-sdk*
