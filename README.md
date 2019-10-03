@@ -3,7 +3,7 @@
 ![logo](img/logo.jpg?raw=true "Ripsaw")
 
 
-A tool/server splitting CSV file by rows count with its header.
+A tool/server splitting CSV file by rows count with its header.  
 You would not need sharp saw any more!
 
 
@@ -111,11 +111,19 @@ Finally, build an image using Dockerfile and then deploy it on the cluster.
 ```
 
 
-## WIP
+## Todos
 
-* [ ] Support compressed file (by zip or gz etc. for input/output)
-* [ ] Monitoring splitting progress
-* [ ] Web UI?
+* [ ] Support compressed files (by zip or gz etc. for input/output)
+* [ ] Enable splitting by data size (not rows count)
+* [ ] Consider error report
+* [ ] Think something about limitation (data size?)
+* [ ] Monitor splitting progress
+* [ ] Support .xlsx?
+
+And... only for server:
+
+* [ ] Support short-term file retention (currently 1 month by the bucket)
+* [ ] Create Web UI (upload/download)?
 
 
 ## License
