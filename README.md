@@ -74,9 +74,9 @@ Just create a service account and a pub/sub topic we want to subscribe.
 (venv) % gcloud projects add-iam-policy-binding <PROJECT-ID> \
   --member=serviceAccount:service-<PROJECT-NUMBER>@gcp-sa-pubsub.iam.gserviceaccount.com \
   --role=roles/iam.serviceAccountTokenCreator
-(venv) % gcloud iam service-accounts create cloud-run-ripsaw-invoker \
-  --display-name "Cloud Run Ripsaw Invoker"
 
+(venv) % gcloud beta iam service-accounts create cloud-run-ripsaw-invoker \
+  --display-name "Cloud Run Ripsaw Invoker"
 (venv) % gcloud beta run services add-iam-policy-binding ripsaw \
  --member=serviceAccount:cloud-run-ripsaw-invoker@<PROJECT-ID>.iam.gserviceaccount.com \
  --role=roles/run.invoker
@@ -96,6 +96,16 @@ Let's create a bucket and configure notification to topic we've just created.
 (venv) % gsutil mb --retention 1d gs://<BUCKET-NAME>
 (venv) % gsutil notification create -f json \
   -t projects/<PROJECT-ID>/topics/ripsaw gs://<BUCKET-NAME>
+```
+
+```zsh
+(venv) % gcloud beta iam service-accounts create cloud-storage-ripsaw-handler \
+  --display-name "Cloud Storage Ripsaw Handler"
+(venv) % gcloud projects add-iam-policy-binding <PROJECT-ID> \
+ --member=serviceAccount:cloud-storage-ripsaw-handler@<PROJECT-ID>.iam.gserviceaccount.com \
+ --role=roles/storage.objectAdmin
+(venv) % gcloud iam service-accounts keys create ./<FILE> \
+  --iam-account cloud-storage-ripsaw-handler@<PROJECT-ID>.iam.gserviceaccount.com
 ```
 
 ###### Cloud Run
