@@ -11,7 +11,7 @@ build\:release:
 .PHONY: build\:release
 
 deploy:
-	gcloud builds submit --tag $(IMAGE)
+	gcloud builds submit --tag $(IMAGE) --timeout 1h
 	gcloud beta run deploy $(NAME) \
 		--image $(IMAGE) \
 		--platform managed
