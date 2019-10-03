@@ -32,6 +32,7 @@ NR % l == 2 { close(x); N++; x = p N s; print header > x }
 
 * Rust
 * MUSL libc (only for server)
+* OpenSSL
 
 
 ## Setup
@@ -42,21 +43,21 @@ TODO
 
 ### Server
 
-##### Local
+#### Local
 
 ```zsh
 % make
 % HOST=127.0.0.1 PORT=8000 ./ripsaw
 ```
 
-##### Docker
+#### Docker
 
 ```zsh
 % docker build . -t ripsaw:latest
 % docker run --env PORT=8000 -p 127.0.0.1:8000:8000/tcp ripsaw
 ```
 
-##### e.g. Cloud Pub/Sub + Cloud Run + Cloud Storage
+#### Cloud Pub/Sub + Cloud Run + Cloud Storage
 
 ```zsh
 % python2.7 -m virtualenv venv
@@ -108,9 +109,9 @@ Let's create a bucket and configure notification to topic we've just created.
   --iam-account cloud-storage-ripsaw-handler@<PROJECT-ID>.iam.gserviceaccount.com
 ```
 
-###### Cloud Run
+##### Cloud Run
 
-Finally, build an image using Dockerfile and then deploy it on the cluster.
+Build an image using Dockerfile and then deploy it on the cluster.
 
 ```zsh
 (venv) % gcloud config set run/region <REGION>
@@ -118,6 +119,13 @@ Finally, build an image using Dockerfile and then deploy it on the cluster.
 (venv) % gcloud builds submit --tag gcr.io/<PROJECT-ID>/ripsaw
 (venv) % gcloud beta run deploy ripsaw \
   --image gcr.io/<PROJECT-ID>/ripsaw --platform managed
+```
+
+Finally, ship it!
+
+
+```zsh
+(venv) % PROJECT_ID=<PROJECT_ID> make deploy
 ```
 
 
