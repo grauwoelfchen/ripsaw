@@ -4,6 +4,7 @@ version = "0.0.1"
 authors = ["Yasuhiro Яша Asaka <yasuhiro.asaka@grauwoelfchen.net>"]
 description = "A server/cli CSV splitter"
 repository = "https://gitlab.com/grauwoelfchen/ripsaw"
+edition = "2018"
 keywords = []
 license = "Apache-2.0"
 
